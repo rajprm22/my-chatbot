@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>தமிழ்மொழி அறிவுப் பயணம்</title>
+    <style>
+        :root {
+            --primary-color: #800020; /* Deep Burgundy for a cultural feel */
+            --secondary-color: #fdf5e6; /* Warm Old Lace background */
+            --accent-color: #ff8c00; /* Festive Orange */
+            --chat-bg: #ffffff;
+            --text-color: #2b2b2b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 480px;
+            height: 85vh;
+            background: var(--chat-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid var(--primary-color);
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #faf8f5;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .message.bot {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            align-self: flex-start;
+            border-top-left-radius: 3px;
+            border: 1px solid #e6dbb8;
+        }
+
+        .message.user {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            border-top-right-radius: 3px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            margin-left: 8px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: #5c0017;
+            border: 1px solid var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        🌾 தமிழ்மொழி அறிவுப் பயணம்
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <!-- Initial Welcome Message -->
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="chatInput" class="chat-input" placeholder="உங்கள் பதிலை இங்கே தட்டச்சு செய்யவும்..." autocomplete="off">
+        <button id="sendBtn" class="send-btn">அனுப்பு</button>
+    </div>
+</div>
+
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    // Structured Learning Data mapping back to your storyboard elements
+    const curriculum = {
+        idioms: [
+            { phrase: "அவசரக்குடுக்கை", meaning: "எதையும் ஆழமாக யோசிக்காமல், பதற்றத்துடன் அவசரமாகச் செயல்படும் நபர்.", context: "பதற்றத்துடன் தண்ணீரைக்கொட்டும் மாணவன்." },
+            { phrase: "ஆறப்போடுதல்", meaning: "ஒரு காரியத்தை உடனே செய்யாமல் காலதாமதம் செய்வது.", context: "வீட்டுப்பாடத்தை செய்யாமல் தள்ளிப்போடும் நண்பன்." },
+            { phrase: "இனிக்கப்பேசுதல்", meaning: "பிறரைக் கவரும் வகையிலோ காரியம் சாதிப்பதற்காகவோ மிக மென்மையாகவும் ஆசையாகவும் பேசுவது.", context: "உதவி கேட்டு மென்மையாகப் பேசும் மாணவன்." }
+        ],
+        phrases: [
+            { phrase: "கனவோ நனவோ", meaning: "நடக்கும் ஒரு வியப்பான விஷயம் உண்மையா அல்லது கற்பனையா என்று திகைத்துப் போவது.", context: "வானவேடிக்கையைக் கண்டு வியந்து நிற்கும் மாணவன்." },
+            { phrase: "ஏட்டிக்குப் போட்டியாக", meaning: "ஒருவருக்கு முரணாக, பிடிவாதத்துடன் எதிர்த்துச் செயல்படுவது.", context: "இரு பிள்ளைகள் பிடிவாதத்துடன் பந்தயத்தில் ஓடுவது." },
+            { phrase: "எதிரும் புதிருமாக", meaning: "இருவர் அல்லது இரு கருத்துக்கள் முற்றிலும் மாறுபட்டு, நேர் எதிராக இருப்பது.", context: "மாறுபட்ட கருத்துக்களுடன் விவாதிக்கும் இரு நண்பர்கள்." }
+        ],
+        proverbs: [
+            { phrase: "அகத்தின் அழகு முகத்தில் தெரியும்", meaning: "ஒருவரின் நல்ல குணங்கள் மற்றும் எண்ணங்கள் அவரது முகத்தில் வெளிப்படும்.", context: "முதியவருக்கு உதவும் ஒரு அன்பான குழந்தை." },
+            { phrase: "ஐந்தில் வளையாதது ஐம்பதில் வளையுமா?", meaning: "சிறு வயதில் கற்றுக்கொள்ள வேண்டிய நல்ல பழக்கவழக்கங்களை, வயதான பிறகு கற்றுக்கொள்வது கடினம்.", context: "பெற்றோர் குழந்தைக்கு ஒழுக்கத்தைக் கற்றுக்கொடுத்தல்." },
+            { phrase: "சுவரில்லாமல் சித்திரம் வரைய முடியுமா?", meaning: "எந்த ஒரு காரியத்தையும் செய்வதற்குத் தேவையான அடிப்படை ஆதாரம் அவசியம்.", context: "சுவர் இல்லாமல் ஓவியம் வரைய முயலும் ஒரு கலைஞர்." }
+        ]
+    };
+
+    let currentMode = "menu"; // tracks state: menu, quiz
+    let currentQuizQuestion = null;
+
+    function getWelcomeMessage() {
+        return `வணக்கம்! 🌾 தமிழ்மொழி அறிவுப் பயணத்திற்கு உங்களை வரவேற்கிறோம்! 
+
+கீழே உள்ள எண்களில் ஒன்றைத் தேர்ந்தெடுத்து தட்டச்சு செய்யுங்கள்:
+1️⃣ மரபுத்தொடர் (Idioms)
+2️⃣ இணைமொழி (Phrases)
+3️⃣ பழமொழி (Proverbs)
+🎲 **புதிர்** - என்று தட்டச்சு செய்து உங்கள் அறிவைச் சோதித்துப் பாருங்கள்!`;
+    }
+
+    function appendMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+        messageDiv.innerText = text;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function startQuiz() {
+        currentMode = "quiz";
+        const categories = ['idioms', 'phrases', 'proverbs'];
+        const randomCat = categories[Math.floor(Math.random() * categories.length)];
+        const questions = curriculum[randomCat];
+        currentQuizQuestion = questions[Math.floor(Math.random() * questions.length)];
+
+        appendMessage(`🧠 **புதிர் நேரம்!** \n\nசூழல்: ${currentQuizQuestion.context}\n\nஇந்தச் சூழலுக்குப் பொருத்தமான தமிழ் மரபுத்தொடர்/இணைமொழி/பழமொழி எது? (பதிலை அப்படியே தட்டச்சு செய்யவும்)`, 'bot');
+    }
+
+    function handleResponse(userText) {
+        const text = userText.trim();
+
+        // Check if user wants to quit or go back to menu
+        if (text.toLowerCase() === 'menu' || text === 'மேனு') {
+            currentMode = "menu";
+            appendMessage(getWelcomeMessage(), 'bot');
+            return;
+        }
+
+        if (currentMode === "quiz") {
+            if (text.includes(currentQuizQuestion.phrase)) {
+                appendMessage(`🎉 சரியான பதில்! \n\n✨ ${currentQuizQuestion.phrase}\n📖 விளக்கம்: ${currentQuizQuestion.meaning}\n\nதொடர 'quiz' என்று தட்டச்சு செய்யவும் அல்லது முதன்மைப் பக்கத்திற்குச் செல்ல 'menu' என்று தட்டச்சு செய்யவும்.`, 'bot');
+            } else {
+                appendMessage(`❌ தவறான பதில், மீண்டும் முயற்சிக்கவும்! \n\nகுறிப்பு: பதில் "${currentQuizQuestion.phrase.substring(0,3)}..." என்று தொடங்கும். (அல்லது விடை தெரியவில்லை எனில் 'menu' என தட்டச்சு செய்யவும்)`, 'bot');
+            }
+            return;
+        }
+
+        // Menu Mode handling
+        if (text === '1') {
+            let reply = "📚 **மரபுத்தொடர்கள் (Idioms):**\n\n";
+            curriculum.idioms.forEach(i => reply += `🔸 *${i.phrase}* \n   விளக்கம்: ${i.meaning}\n\n`);
+            reply += "திரும்பச் செல்ல 'menu' என தட்டச்சு செய்யவும்.";
+            appendMessage(reply, 'bot');
+        } else if (text === '2') {
+            let reply = "🔗 **இணைமொழிகள் (Phrases):**\n\n";
+            curriculum.synonyms.forEach(i => reply += `🔸 *${i.phrase}* \n   விளக்கம்: ${i.meaning}\n\n`);
+            reply += "திரும்பச் செல்ல 'menu' என தட்டச்சு செய்யவும்.";
+            appendMessage(reply, 'bot');
+        } else if (text === '3') {
+            let reply = "💡 **பழமொழிகள் (Proverbs):**\n\n";
+            curriculum.proverbs.forEach(i => reply += `🔸 *${i.phrase}* \n   விளக்கம்: ${i.meaning}\n\n`);
+            reply += "திரும்பச் செல்ல 'menu' என தட்டச்சு செய்யவும்.";
+            appendMessage(reply, 'bot');
+        } else if (text.toLowerCase() === 'quiz' || text === 'புதிர்') {
+            startQuiz();
+        } else {
+            appendMessage("மன்னிக்கவும், புரியவில்லை. தயவுசெய்து 1, 2, 3 அல்லது 'quiz' என்று தட்டச்சு செய்யவும்.", 'bot');
+        }
+    }
+
+    function processSend() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        
+        appendMessage(text, 'user');
+        chatInput.value = '';
+        setTimeout(() => handleResponse(text), 500);
+    }
+
+    // Initialize chatbot
+    window.onload = () => {
+        appendMessage(getWelcomeMessage(), 'bot');
+    };
+
+    sendBtn.addEventListener('click', processSend);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') processSend();
+    });
+</script>
+
+</body>
+</html>
